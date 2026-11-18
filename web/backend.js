@@ -244,6 +244,26 @@ function apply_match (sentences, match) {
     // return [uk_unit, unit] // New match
 }
 
+/*
+    sentences : [{}] format de SENTENCES
+    match : format des éléments de MATCHES = {uk_unit:"unité langue inconnue",unit:"unité langue connue"}
+*/
+function unapply_match (sentences, match) {
+
+    const {uk_unit,unit} = match;
+
+    for(let i = 0; i<sentences.length; i++){
+        let {unmatched_k_units, uk_mask, k_units} = sentences[i];
+
+        if(k_units.has(unit)){
+            unmatched_k_units.add(unit);
+
+            for(let j=0; j<uk_mask.length; j++)
+                if (uk_mask[j]==unit)
+                    uk_mask[j] = null;
+        }
+    }
+}
 
 
 /*
