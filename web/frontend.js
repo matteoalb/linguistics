@@ -3,7 +3,7 @@ const MATCHES = [];
 
 class SpaceUnit {}; // unit for blocking matching on space characters
 
-const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#C0C0C0", "#008080", "#FFFFFF", "#FFFF00", "#000000"];
+const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#C0C0C0", "#008080", "#FFFF00", "#000000"];
 
 function full_refresh_display () {
     const table = document.getElementById('strs');
@@ -74,7 +74,7 @@ function full_refresh_display () {
             .replace(/[\s\t]+/," ").trim();
     }
 
-    document.getElementById('uk_str_remove_majs').addEventListener('click', () => {
+    document.getElementById('uk_str_remove_puncts').addEventListener('click', () => {
         for (const sentence of SENTENCES) {
             sentence.uk_str = clean_str(sentence.uk_str, document.getElementById('chars_delete').value);
             sentence.uk_mask = new Array(sentence.uk_str.length).fill(0).map((e,i)=>(sentence.uk_str[i]==" "?new SpaceUnit():null));
@@ -85,6 +85,11 @@ function full_refresh_display () {
     document.getElementById('k_str_remove_majs').addEventListener('click', () => {
         for (const sentence of SENTENCES)
             sentence.k_str = clean_str(sentence.k_str, document.getElementById('chars_delete').value);
+        full_refresh_display();
+    });
+    document.getElementById('uk_str_remove_majs').addEventListener('click', () => {
+        for (const sentence of SENTENCES)
+            sentence.uk_str = sentence.uk_str.toLowerCase();
         full_refresh_display();
     });
 
@@ -145,11 +150,10 @@ function reset_matching () {
 }
 
 document.getElementById('reset_matching').addEventListener('click', () => {
-
+    reset_matching();
 })
 
 document.getElementById('automatic_matching').addEventListener('click', () => {
-    reset_matching();
 
     let new_match = true;
     while (new_match!==undefined) {
@@ -162,5 +166,29 @@ document.getElementById('automatic_matching').addEventListener('click', () => {
 
     console.table(MATCHES);
 
+    full_refresh_display();
+});
+
+document.getElementById('matching_step').addEventListener('click', () => {
+
+    const selector = document.getElementById('possible_matches');
+    while (selector.childElementCount) selector.removeChild(selector.firstChild);
+
+    const possible_matches = FindBestMatch(SENTENCES, MATCHES);
+    for (const match of possible_matches) {
+        selector.appendChild(Object.assign(document.createElement('option'), {
+            value: JSON.stringify(match),
+            innerHTML: `<b>${match.uk_unit}</b> <-> ${match.unit} (Score: ${match.score})`
+        }));
+    }
+})
+
+document.getElementById('apply_match').addEventListener('click', () => {
+    const selector = document.getElementById('possible_matches');
+    if (selector.value=='') return;
+    const new_match = JSON.parse(selector.value);
+    apply_match(SENTENCES, new_match);
+    MATCHES.push(new_match);
+    while (selector.childElementCount) selector.removeChild(selector.firstChild);
     full_refresh_display();
 });

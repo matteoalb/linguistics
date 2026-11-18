@@ -25,8 +25,9 @@
                 <label for="chars_delete">Caractères à retirer :</label>
                 <input type="text" id="chars_delete" type="text" size=20 value=".,;:!?_-[](){}。" />
                 <br>
-                <button id="uk_str_remove_majs">Retirer les caractères en langue inconnue</button>
+                <button id="uk_str_remove_puncts">Retirer les caractères en langue inconnue</button>
                 <button id="k_str_remove_majs" class="hidden">Retirer les caractères en langue connue</button>
+                <button id="uk_str_remove_majs">Décapitaliser en langue inconnue</button>
             </div>
         </div>
         <div id="step_units" class="hidden menu">
@@ -59,15 +60,21 @@
 
             <button id="reset_matching">Réinitialiser les appariements</button>
             <br>
-            <button id="automatic_matching">Matching automatique</button>
-            <br>
-            <br>
-            Matching étape par étape
-            <button id=matching_step>Exécuter 1 étape</button>
-            <br>
-            <label for="possible_matches">Appariements possibles :</label>
-            <select id="possible_matches" name="possible_matches"></select>
-
+            <div id="auto_matching_container">
+                <h3>Matching automatique</h3>
+                <br>
+                <button id="automatic_matching">Matching automatique</button>
+            </div>
+            <div id="manual_matching_container">
+                <h3>Matching étape par étape</h3>
+                <button id=matching_step>Scan des paires possibles</button>
+                <br>
+                <label for="possible_matches">Appariements possibles :</label>
+                <br>
+                <select id="possible_matches" name="possible_matches"></select>
+                <br>
+                <button id="apply_match">Appliquer l'appariement</button>
+            </div>
         </div>
 
         <br>

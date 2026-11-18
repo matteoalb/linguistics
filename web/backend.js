@@ -229,9 +229,12 @@ function apply_match (sentences, match) {
             // console.log(JSON.stringify(sentences[i].uk_mask));
             unmatched_k_units.delete(unit);
             for(let s of KMP_occ(uk_unit,uk_str)){
-                for(let j=s; j<s+uk_unit.length;j++){
-                    uk_mask[j]=unit;
-                }
+                let unused = true;
+                for(let j=s; j<s+uk_unit.length;j++)
+                    unused &&= (uk_mask[j]==null);
+                if (unused)
+                    for(let j=s; j<s+uk_unit.length;j++)
+                        uk_mask[j]=unit;
             }
             // console.log(JSON.stringify(sentences[i].uk_mask));
         }
