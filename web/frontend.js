@@ -6,18 +6,13 @@ class SpaceUnit {}; // unit for blocking matching on space characters
 const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#C0C0C0", "#008080", "#FFFF00", "#000000"];
 
 function full_refresh_display () {
-    const table = document.getElementById('strs');
-
-    while (table.children.length>1) table.removeChild(table.lastChild);
 
     const matched_units = MATCHES.map(e=>e.unit);
-
     function get_color (unit) {
         if (matched_units.length==0) return '#000000';
         if (unit===null) return '#000000';
         return colors.at(matched_units.indexOf(unit)%colors.length);
     }
-
     function color (uk_str, mask=null) {
         if (mask==null) mask = new Array(uk_str.length).fill(null);
         out = '';
@@ -26,18 +21,36 @@ function full_refresh_display () {
         return out;
     }
 
-    for (const sentence of SENTENCES) {
-        const tr = document.createElement('tr');
+    {
+        const table = document.getElementById('strs');
+        while (table.children.length>1) table.removeChild(table.lastChild);
 
-        tr.appendChild(Object.assign(document.createElement('td'), {innerHTML:color(sentence.uk_str,sentence.uk_mask)}));
-        tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.k_str}));
-        td_units = document.createElement('td');
-        for (const unit of sentence.k_units||[]) {
-            td_units.appendChild(Object.assign(document.createElement('font'), {textContent:unit,classList:['unit'],color:get_color(unit)}));
+        for (const sentence of SENTENCES) {
+            const tr = document.createElement('tr');
+
+            tr.appendChild(Object.assign(document.createElement('td'), {innerHTML:color(sentence.uk_str,sentence.uk_mask)}));
+            tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.k_str}));
+            td_units = document.createElement('td');
+            for (const unit of sentence.k_units||[]) {
+                td_units.appendChild(Object.assign(document.createElement('font'), {textContent:unit,classList:['unit'],color:get_color(unit)}));
+            }
+            tr.appendChild(td_units)
+            table.appendChild(tr);
         }
-        tr.appendChild(td_units)
-        table.appendChild(tr);
     }
+
+    {
+        const table = document.getElementById('matches');
+        while (table.children.length>1) table.removeChild(table.lastChild);
+
+        for (const match of MATCHES) { // TODO: get_color(match.k_unit)
+            const tr = document.createElement('tr');
+            tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.uk_unit}));
+            tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.unit}));
+            table.appendChild(tr);
+        }
+    }
+
 }
 
 { // IMPORT CSV
@@ -113,6 +126,7 @@ function step_units () {
     document.getElementById('step_units').classList.remove('hidden');
 }
 function step_matching () {
+    reset_matching();
     [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
     document.getElementById('step_matching').classList.remove('hidden');
 }
