@@ -3,3 +3,14 @@
 This school project is led by Mattéo A., Mimmo C., Sami G. and Viola D.
 
 The goal is to develop the prototype of a morpheme detector and a dashboard. 
+
+## Structure
+
+The final product can be found in the *web* folder, with the core of the project in ```web/backend.js```.
+The equivalent of this file in Python can be found in ```legacy/backend.py```.
+
+The rest of the project is dedicated to UI and data storage.
+
+## User Manual and Application
+
+We wrote a user manual which shows how to use our tool to detect morphemes, it can be found in ```path/to_file.pdf```.
