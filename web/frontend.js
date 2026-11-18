@@ -46,17 +46,24 @@ function full_refresh_display () {
         const table = document.getElementById('matches');
         while (table.children.length>1) table.removeChild(table.lastChild);
 
-        for (const match of MATCHES) { // TODO: get_color(match.k_unit)
+        for (let i =0; i<MATCHES.length;i++) { // TODO: get_color(match.k_unit)
+            const match = MATCHES[i];
             const tr = document.createElement('tr');
             tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.uk_unit}));
             tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.unit}));
 
             const btn = document.createElement('button');
+            const td = document.createElement('td');
+            td.classList.add('center-cell');
+            td.appendChild(btn);
             btn.textContent = 'X';
+            btn.classList.add("delete_btn");
             btn.addEventListener('click', () => {
-                unapply_match(SENTENCES, match.unit);
+                unapply_match(SENTENCES, match);
+                MATCHES.splice(i,1);
+                full_refresh_display();
             });
-            tr.appendChild(btn);
+            tr.appendChild(td);
 
             table.appendChild(tr);
         }

@@ -53,6 +53,7 @@
             </div>
         </div>
         <div id="step_matching" class="hidden menu">
+            <br>
             <button onclick="step_units()">&lt;</button>
             <h1>Étape 3 - Matching</h1>
         
@@ -69,11 +70,11 @@
             <div id="manual_matching_container">
                 <h3>Matching étape par étape</h3>
                 <button id=matching_step>Scan des paires possibles</button>
-                <br>
+                <br><br>
                 <label for="possible_matches">Appariements possibles :</label>
                 <br>
-                <select id="possible_matches" name="possible_matches"></select>
-                <br>
+                <select id="possible_matches" name="possible_matches" style="min-width: 100px;"></select>
+                <br><br>
                 <button id="apply_match">Appliquer l'appariement</button>
             </div>
             <div class="toggle_container">
@@ -103,6 +104,8 @@
                 <th>Supprimer la paire</th>
             </thead>
         </table>
+
+        <br><br>
 
         <script id="interface" src="backend.js"></script>
         <script id="interface" src="frontend.js"></script>
