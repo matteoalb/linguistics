@@ -2,226 +2,71 @@
     <head>
         <meta charset="utf-8" />
         <title>Linguistique</title>
+        <link rel="stylesheet" href="main.css">
 
-        <style>
-            .menu {
-                top: 0;
-                position: sticky;
-                background-color: white;
-            }
-
-            /* table {
-                width: 100%;
-            } */
-            table, th, td {
-                border-collapse: collapse;
-                border: 1px solid black;
-            }
-            td {
-                padding: .2em;
-            }
-
-            h1, button {
-                vertical-align: middle;
-                display: inline-block;
-                margin: .5em;
-            }
-
-            .hidden {
-                display: none;
-            }
-
-            font.unit {
-                border: 1px solid black;
-                padding: .2em;
-                margin: .2em;
-            }
-        </style>
     </head>
     <body>
 
         <div id="step_csv" class="menu">
+            <br>
             <h1>Étape 1 - Importer/Nettoyer</h1>
             <button onclick="step_units()">></button>
             
             <br>
-            <br>
-            <label for="csv_separator">Séparateur de colonnes csv :</label>
-            <input type="text" id="csv_separator" type="text" size=2 value=";" />
-            <br>
-            <label for="csv_import">Importer un csv :</label>
-            <input name="csv_import" id="csv_import" type="file"/>
-            <br><br>
-            Nettoyer les textes (majuscules, ponctuation, etc)
-            <br>
-            <label for="chars_delete">Caractères à retirer :</label>
-            <input type="text" id="chars_delete" type="text" size=20 value=".,;:!?_-[](){}。" />
-            <br>
-            <button id="uk_str_remove_majs">Retirer les caractères en langue inconnue</button>
-            <button id="k_str_remove_majs" class="hidden">Retirer les caractères en langue connue</button>
+            <div id="container">
+                <label for="csv_separator">Séparateur de colonnes csv :</label>
+                <input type="text" id="csv_separator" type="text" size=2 value=";" />
+                <br>
+                <label for="csv_import">Importer un csv :</label>
+                <input name="csv_import" id="csv_import" type="file"/>
+                <br><br>
+                Nettoyer les textes (majuscules, ponctuation, etc)
+                <br>
+                <label for="chars_delete">Caractères à retirer :</label>
+                <input type="text" id="chars_delete" type="text" size=20 value=".,;:!?_-[](){}。" />
+                <br>
+                <button id="uk_str_remove_majs">Retirer les caractères en langue inconnue</button>
+                <button id="k_str_remove_majs" class="hidden">Retirer les caractères en langue connue</button>
+            </div>
         </div>
         <div id="step_units" class="hidden menu">
+            <br>
             <button onclick="step_csv()">&lt;</button>
             <h1>Étape 2 - Extraction des unités</h1>
             <button onclick="step_matching()">></button>
             
             <br>
-            <br>
-            Nettoyer la langue connue
-            <button id="k_english_str_remove_majs">Retirer les caractères spéciaux en langue connue (ponctuation)</button>
+            <div id="container">
+                Nettoyer la langue connue
+                <button id="k_english_str_remove_majs">Retirer les caractères spéciaux en langue connue (ponctuation)</button>
 
-            <br>
-            <br>
-            Extraction d'unités
-            <label for="units_method">Méthode :</label>
-            <select name="units_method" id="units_method">
-                <option value="units_words" selected>Mots (séparation par les espaces)</option>
-                <option value="morphemes">Morphèmes (basé sur un dictionnaire)</option>
-            </select>
-            <br>
-            <button id="units_extract">Extraire les unités</button>
+                <br>
+                Extraction d'unités
+                <label for="units_method">Méthode :</label>
+                <select name="units_method" id="units_method">
+                    <option value="units_words" selected>Mots (séparation par les espaces)</option>
+                    <option value="morphemes">Morphèmes (basé sur un dictionnaire)</option>
+                </select>
+                <br>
+                <button id="units_extract">Extraire les unités</button>
+            </div>
         </div>
         <div id="step_matching" class="hidden menu">
             <button onclick="step_units()">&lt;</button>
             <h1>Étape 3 - Matching</h1>
         </div>
 
-        <br><br>
+        <br>
 
         <table id="strs">
             <thead>
-                <td>Texte Langue inconnue</td>
-                <td>Texte langue connue</td>
-                <td>Unités langue connue</td>
+                <th>Texte Langue inconnue</th>
+                <th>Texte langue connue</th>
+                <th>Unités langue connue</th>
             </thead>
         </table>
 
-        <script id="matcher">
-            // LCS, KMP, KMP_occ
-
-            /* SENTENCES format:
-                [
-                    {
-                        uk_str:string               // 
-                        k_units: Set(int/str)       // int/str -> unit (word, token, morpheme)
-                        uk_mask: Array(int/str)     // null -> not matched, int/str -> unit guessed
-                    
-                    }
-                ]
-            */
-
-        </script>
-
-        <script id="interface">
-
-            const SENTENCES = [];
-
-            function full_refresh_display () {
-                const table = document.getElementById('strs');
-
-                while (table.children.length>1) table.removeChild(table.lastChild);
-
-                for (const sentence of SENTENCES) {
-                    const tr = document.createElement('tr');
-                    tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.uk_str}));
-                    tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.k_str}));
-                    td_units = document.createElement('td');
-                    for (const unit of sentence.k_units||[]) {
-                        td_units.appendChild(Object.assign(document.createElement('font'), {textContent:unit,classList:['unit']}))
-                    }
-                    tr.appendChild(td_units)
-                    table.appendChild(tr);
-                }
-            }
-
-            { // IMPORT CSV
-                const csv_import = document.getElementById('csv_import');
-                csv_import.addEventListener('input', async (e)=>{
-
-                    if (csv_import.files.length) {
-                        const separator = document.getElementById('csv_separator').value;
-
-                        const pairs = [];
-                        for (const line of (await csv_import.files[0].text()).split(/[\r\n]+/)) {
-                            const [uk_str,k_str] = line.split(separator);
-                            if (k_str) pairs.push({uk_str,k_str});
-                        }
-
-                        for ({uk_str,k_str} of pairs) {
-                            SENTENCES.push({
-                                uk_str, k_str
-                            });
-                        }
-
-                        full_refresh_display();
-                    }
-                });
-            }
-
-            { // CLEAN INPUT
-
-                function clean_str (str, chars) {
-                    for (const char of chars)
-                        str = str.replaceAll(char, ' ');
-                    return str
-                        // .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," ")
-                        .replace(/[\s\t]+/," ").trim();
-                }
-
-                document.getElementById('uk_str_remove_majs').addEventListener('click', () => {
-                    for (const sentence of SENTENCES)
-                        sentence.uk_str = clean_str(sentence.uk_str, document.getElementById('chars_delete').value);
-                    full_refresh_display();
-                });
-                document.getElementById('k_str_remove_majs').addEventListener('click', () => {
-                    for (const sentence of SENTENCES)
-                        sentence.k_str = clean_str(sentence.k_str, document.getElementById('chars_delete').value);
-                    full_refresh_display();
-                });
-
-
-                document.getElementById('k_english_str_remove_majs').addEventListener('click', () => {
-                    for (const sentence of SENTENCES)
-                        sentence.k_str = clean_str(
-                            sentence.k_str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," "),
-                            ".,;:!?_-[](){}").toLowerCase();
-                    full_refresh_display();
-                });
-            }
-
-            // STEPS
-            function step_csv () {
-                [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
-                document.getElementById('step_csv').classList.remove('hidden');
-            }
-            function step_units () {
-                [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
-                document.getElementById('step_units').classList.remove('hidden');
-            }
-            function step_matching () {
-                [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
-                document.getElementById('step_matching').classList.remove('hidden');
-            }
-
-            class SpaceUnit {}; // unit for blocking matching on space characters
-
-            document.getElementById('units_extract').addEventListener('click', () => {
-                switch (document.getElementById('units_method').value) {
-                    case 'units_words':
-                        for (const sentence of SENTENCES)
-                            sentence.k_units = new Set(sentence.k_str.split(/[\s\t]+/));
-                        full_refresh_display();
-                        break;
-                    case 'morphemes': // TODO
-                        for (const sentence of SENTENCES)
-                            sentence.k_units = new Set(sentence.k_str.split(/[\s\t]+/));
-                        full_refresh_display();
-                        break;
-                }
-            });
-
-
-        </script>
+        <script id="interface" src="frontend.js"></script>
         
     </body>
 </html>

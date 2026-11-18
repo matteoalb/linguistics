@@ -1,0 +1,107 @@
+/* 
+    Table style:    https://www.w3schools.com/css/tryit.asp?filename=trycss_table_fancy
+*/
+
+body{
+  font-family: Arial, Helvetica, sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.menu {
+    top: 0;
+    position: sticky;
+    background-color: white;
+
+    text-align: center;
+    width: 100%;
+}
+
+h1 {
+    vertical-align: middle;
+    display: inline-block;
+    margin: .5em;
+}
+
+.hidden {
+    display: none;
+}
+
+font.unit {
+    border: 1px solid black;
+    padding: .2em;
+    margin: .2em;
+}
+
+/* TABLE */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+
+  max-width: 1000px; 
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2;}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4343d6;
+  color: white;
+}
+
+/* BUTTONS */
+
+button{
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 1px solid;
+    border-radius: 6px;
+    color: #24292e;
+    background-color: #fafbfc;
+    border-color: #1b1f2326;
+    box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px 0px inset;
+    transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+    transition-property: color, background-color, border-color;
+
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+
+button:hover {
+    background-color: #f3f4f6;
+    border-color: #1b1f2326;
+    transition-duration: 0.1s;
+}
+
+#container {
+    width:500px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+#container button:not(.hidden) {
+    display: block;
+    margin: 10px auto;
+}
+
+#container label{
+    line-height: 1.8;
+}
