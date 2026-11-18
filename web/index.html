@@ -54,6 +54,20 @@
         <div id="step_matching" class="hidden menu">
             <button onclick="step_units()">&lt;</button>
             <h1>Étape 3 - Matching</h1>
+        
+            <br><br>
+
+            <button id="reset_matching">Réinitialiser les appariements</button>
+            <br>
+            <button id="automatic_matching">Matching automatique</button>
+            <br>
+            <br>
+            Matching étape par étape
+            <button id=matching_step>Exécuter 1 étape</button>
+            <br>
+            <label for="possible_matches">Appariements possibles :</label>
+            <select id="possible_matches" name="possible_matches"></select>
+
         </div>
 
         <br>
@@ -66,7 +80,7 @@
             </thead>
         </table>
 
+        <script id="interface" src="backend.js"></script>
         <script id="interface" src="frontend.js"></script>
-        
     </body>
 </html>

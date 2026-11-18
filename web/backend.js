@@ -1,3 +1,55 @@
+
+const base = 257n;
+const mod = (1n<<61n)-1n;
+
+function powMod(base, exponent, modulus){
+    
+    /*
+        Modular Exponentiation by adrian154 on GitHub
+    */
+
+    if(modulus == 1n) {
+        return 0n;
+    }
+
+    let result = 1n;
+    base = base % modulus;
+    while(exponent > 0n) {
+        if(exponent % 2n == 1n) {
+            result = (result * base) % modulus;
+        }
+        exponent >>= 1n;
+        base = (base * base) % modulus;
+    }
+    
+    return result;
+
+}
+
+function hashes(s, mask, length){
+    let result = new Map();
+    let h = 0n; let valid = 0;
+
+    let power = powMod(base, BigInt(length), mod);
+
+    for (let i = 0; i < s.length; i++) {
+        h = (h * base + BigInt(s.charCodeAt(i))) % mod;
+        valid += (mask[i]==null);
+
+        if(i >= length){
+            h = ((h - BigInt(s.charCodeAt(i-length)) * power) % mod + mod) % mod;
+            valid -= (mask[i-length]==null);
+        }
+
+        if(i>=length-1 && valid === length){
+            if (!result.has(h)) result.set(h, []);
+            result.get(h).push(i - length + 1);
+        }
+    }
+
+    return result;
+}
+
 function LCS(strings, masks=null) {
     /*
         Returns the longest common subrstring in a list of strings
@@ -9,7 +61,7 @@ function LCS(strings, masks=null) {
     }
 
     if(masks === null){
-        masks = strings.map(s => new Array(s.length).fill(true));
+        masks = strings.map(s => new Array(s.length).fill(null));
     }
     else{
         masks = masks.map(m => Array.from(m));
@@ -17,57 +69,6 @@ function LCS(strings, masks=null) {
 
     if(masks.length !== strings.length || strings.some((s, i) => s.length !== masks[i].length)){
         throw new Error("Each string must have a matching mask.");
-    }
-
-    const base = 257n;
-    const mod = (1n<<61n)-1n;
-
-    function hashes(s, mask, length){
-        let result = new Map();
-        let h = 0n; let valid = 0;
-
-        function powMod(base, exponent, modulus){
-            
-            /*
-                Modular Exponentiation by adrian154 on GitHub
-            */
-
-            if(modulus == 1n) {
-                return 0n;
-            }
-
-            let result = 1n;
-            base = base % modulus;
-            while(exponent > 0n) {
-                if(exponent % 2n == 1n) {
-                    result = (result * base) % modulus;
-                }
-                exponent >>= 1n;
-                base = (base * base) % modulus;
-            }
-            
-            return result;
-
-        }
-
-        let power = powMod(base, BigInt(length), mod);
-
-        for (let i = 0; i < s.length; i++) {
-            h = (h * base + BigInt(s.charCodeAt(i))) % mod;
-            valid += mask[i];
-
-            if(i >= length){
-                h = ((h - BigInt(s.charCodeAt(i-length)) * power) % mod + mod) % mod;
-                valid -= mask[i-length];
-            }
-
-            if(i>=length-1 && valid === length){
-                if (!result.has(h)) result.set(h, []);
-                result.get(h).push(i - length + 1);
-            }
-        }
-
-        return result;
     }
 
     function check(length){
@@ -182,7 +183,7 @@ function FindBestMatch(sentences, known_matches){
     */
     const all_units = new Set();
     for(let i =0; i < sentences.length; i++){
-        for(let item of sentences[i][1]){
+        for(let item of sentences[i].unmatched_k_units){
             all_units.add(item);
         }
     }
@@ -193,10 +194,10 @@ function FindBestMatch(sentences, known_matches){
         let unique_uk_candidates = new Array();
         let possible_units = new Set(all_units);
 
-        for(let [uk_str, units, uk_mask] of sentences){
-            if(units.has(unit)){
-                possible_units = new Set([...units].filter(x => possible_units.has(x)));
-                unique_uk_candidates.push([uk_str, uk_mask]);
+        for(const sentence of sentences){
+            if(sentence.unmatched_k_units.has(unit)){
+                possible_units = new Set([...sentence.unmatched_k_units].filter(x => possible_units.has(x)));
+                unique_uk_candidates.push([sentence.uk_str, sentence.uk_mask]);
             }
         }
 
@@ -205,35 +206,44 @@ function FindBestMatch(sentences, known_matches){
             let uk_guess = LCS(strs, masks).trim();
             if(uk_guess !== ""){
                 let score = score_function(uk_guess.length, unique_uk_candidates.length)
-                possible_matches.push([-score, uk_guess, unit]);
+                possible_matches.push({score, uk_unit:uk_guess, unit});
             }
         }
     }
 
-    possible_matches.sort((a,b) => a[0]-b[0]);
+    possible_matches.sort((a,b) => b.score-a.score);
 
-    if(possible_matches.length === 0){
-        return null;
-    }
-
-    let [_, uk_unit, unit] = possible_matches[0];
-    known_matches.push([uk_unit, unit]);
-
-    for(let i = 0; i<sentences.length; i++){
-        let [uk_str, units, uk_mask] = sentences[i];
-        if(units.has(unit)){
-            units.delete(unit);
-            for(let s of KMP_occ(uk_unit,uk_str)){
-                for(let j=s; j<s+uk_unit.length;j++){
-                    uk_mask[j]=false;
-                }
-            }
-        }
-        sentences[i] = [uk_str, units, uk_mask];
-    }
-    return [uk_unit, unit] // New match
+    return possible_matches;
 }
 
+function apply_match (sentences, match) {
+
+    const {uk_unit,unit} = match;
+
+    // known_matches.push([uk_unit, unit]);
+
+
+    for(let i = 0; i<sentences.length; i++){
+        let {uk_str, unmatched_k_units, uk_mask} = sentences[i];
+        if(unmatched_k_units.has(unit)){
+            // console.log(JSON.stringify(sentences[i].uk_mask));
+            unmatched_k_units.delete(unit);
+            for(let s of KMP_occ(uk_unit,uk_str)){
+                for(let j=s; j<s+uk_unit.length;j++){
+                    uk_mask[j]=unit;
+                }
+            }
+            // console.log(JSON.stringify(sentences[i].uk_mask));
+        }
+        // sentences[i] = [uk_str, k_units, uk_mask];
+    }
+
+    // return [uk_unit, unit] // New match
+}
+
+
+
+/*
 const SENTENCES_RAW = [
     ["Ko nakonako ŋkoe","you are walking"],
     ["E nakonako te aiine","a woman is walking"],
@@ -251,8 +261,12 @@ const SENTENCES = PreProcessSentences(SENTENCES_RAW);
 console.log();
 const matches = new Array();
 let new_match = true;
-while(new_match!==null){
+while(new_match!==undefined){
     //console.log();
-    new_match = FindBestMatch(SENTENCES, matches);
+    new_match = FindBestMatch(SENTENCES, matches)[0];
+
+    if(new_match!==undefined)
+        apply_match(SENTENCES, new_match)
 }
 console.log(matches);
+*/

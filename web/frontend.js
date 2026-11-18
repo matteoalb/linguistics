@@ -1,17 +1,39 @@
 const SENTENCES = [];
+const MATCHES = [];
+
+class SpaceUnit {}; // unit for blocking matching on space characters
+
+const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#C0C0C0", "#008080", "#FFFFFF", "#FFFF00", "#000000"];
 
 function full_refresh_display () {
     const table = document.getElementById('strs');
 
     while (table.children.length>1) table.removeChild(table.lastChild);
 
+    const matched_units = MATCHES.map(e=>e.unit);
+
+    function get_color (unit) {
+        if (matched_units.length==0) return '#000000';
+        if (unit===null) return '#000000';
+        return colors.at(matched_units.indexOf(unit)%colors.length);
+    }
+
+    function color (uk_str, mask=null) {
+        if (mask==null) mask = new Array(uk_str.length).fill(null);
+        out = '';
+        for (const i in uk_str)
+            out += `<font color=${get_color(mask[i])}>${uk_str[i]}</font>`;
+        return out;
+    }
+
     for (const sentence of SENTENCES) {
         const tr = document.createElement('tr');
-        tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.uk_str}));
+
+        tr.appendChild(Object.assign(document.createElement('td'), {innerHTML:color(sentence.uk_str,sentence.uk_mask)}));
         tr.appendChild(Object.assign(document.createElement('td'), {textContent:sentence.k_str}));
         td_units = document.createElement('td');
         for (const unit of sentence.k_units||[]) {
-            td_units.appendChild(Object.assign(document.createElement('font'), {textContent:unit,classList:['unit']}))
+            td_units.appendChild(Object.assign(document.createElement('font'), {textContent:unit,classList:['unit'],color:get_color(unit)}));
         }
         tr.appendChild(td_units)
         table.appendChild(tr);
@@ -53,8 +75,11 @@ function full_refresh_display () {
     }
 
     document.getElementById('uk_str_remove_majs').addEventListener('click', () => {
-        for (const sentence of SENTENCES)
+        for (const sentence of SENTENCES) {
             sentence.uk_str = clean_str(sentence.uk_str, document.getElementById('chars_delete').value);
+            sentence.uk_mask = new Array(sentence.uk_str.length).fill(0).map((e,i)=>(sentence.uk_str[i]==" "?new SpaceUnit():null));
+        }
+
         full_refresh_display();
     });
     document.getElementById('k_str_remove_majs').addEventListener('click', () => {
@@ -87,8 +112,6 @@ function step_matching () {
     document.getElementById('step_matching').classList.remove('hidden');
 }
 
-class SpaceUnit {}; // unit for blocking matching on space characters
-
 document.getElementById('units_extract').addEventListener('click', () => {
     switch (document.getElementById('units_method').value) {
         case 'units_words':
@@ -97,10 +120,47 @@ document.getElementById('units_extract').addEventListener('click', () => {
             full_refresh_display();
             break;
         case 'morphemes': // TODO
-            for (const sentence of SENTENCES)
-                sentence.k_units = new Set(sentence.k_str.split(/[\s\t]+/));
+            for (const sentence of SENTENCES) {
+                const k_units = new Set();
+                for (const word of sentence.k_str.split(/[\s\t]+/))
+                    (ENGLISH_MORPHEMES[word].slice(0,1)||[word]).forEach(unit => {
+                        k_units.add(unit);
+                    });
+                sentence.k_units = k_units;
+            }
             full_refresh_display();
             break;
     }
 });
 
+function reset_matching () {
+    while (MATCHES.length) MATCHES.pop();
+
+    for (const sentence of SENTENCES) {
+        sentence.uk_mask = new Array(sentence.uk_str.length).fill(0).map((e,i)=>(sentence.uk_str[i]==" "?new SpaceUnit():null));
+        sentence.unmatched_k_units = new Set(sentence.k_units);
+    }
+
+    full_refresh_display();
+}
+
+document.getElementById('reset_matching').addEventListener('click', () => {
+
+})
+
+document.getElementById('automatic_matching').addEventListener('click', () => {
+    reset_matching();
+
+    let new_match = true;
+    while (new_match!==undefined) {
+        new_match = FindBestMatch(SENTENCES, MATCHES)[0];
+        if(new_match!==undefined) {
+            apply_match(SENTENCES, new_match);
+            MATCHES.push(new_match);
+        }
+    }
+
+    console.table(MATCHES);
+
+    full_refresh_display();
+});
