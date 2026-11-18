@@ -47,6 +47,14 @@ function full_refresh_display () {
             const tr = document.createElement('tr');
             tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.uk_unit}));
             tr.appendChild(Object.assign(document.createElement('td'), {textContent:match.unit}));
+
+            const btn = document.createElement('button');
+            btn.textContent = 'X';
+            btn.addEventListener('click', () => {
+                unapply_match(SENTENCES, match.unit);
+            });
+            tr.appendChild(btn);
+
             table.appendChild(tr);
         }
     }
@@ -205,4 +213,16 @@ document.getElementById('apply_match').addEventListener('click', () => {
     MATCHES.push(new_match);
     while (selector.childElementCount) selector.removeChild(selector.firstChild);
     full_refresh_display();
+});
+
+/* LAST PANEL DOUBLE VIEW */
+
+document.getElementById('display_morphemes').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('strs').classList.add('hidden');
+        document.getElementById('matches').classList.remove('hidden');
+    } else {
+        document.getElementById('strs').classList.remove('hidden');
+        document.getElementById('matches').classList.add('hidden');
+    }
 });

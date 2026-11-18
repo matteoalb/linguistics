@@ -60,6 +60,7 @@
 
             <button id="reset_matching">Réinitialiser les appariements</button>
             <br>
+            
             <div id="auto_matching_container">
                 <h3>Matching automatique</h3>
                 <br>
@@ -75,6 +76,14 @@
                 <br>
                 <button id="apply_match">Appliquer l'appariement</button>
             </div>
+            <div class="toggle_container">
+                <label>Appariements</label>
+                <label class="switch">
+                    <input type="checkbox" id="display_morphemes">
+                    <span class="slider"></span>
+                </label>
+                <label class="fill_right">Morphèmes trouvés</label>
+            </div>
         </div>
 
         <br>
@@ -87,10 +96,11 @@
             </thead>
         </table>
 
-        <table id="matches">
+        <table id="matches" class="hidden">
             <thead>
                 <th>Unité langue inconnue</th>
                 <th>Unité langue connue</th>
+                <th>Supprimer la paire</th>
             </thead>
         </table>
 
