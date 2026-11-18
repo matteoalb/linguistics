@@ -3,7 +3,7 @@ const MATCHES = [];
 
 class SpaceUnit {}; // unit for blocking matching on space characters
 
-const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#C0C0C0", "#008080", "#FFFF00", "#000000"];
+const colors = ["#00FFFF", "#0000FF", "#FF00FF", "#808080", "#008000", "#00FF00", "#800000", "#000080", "#808000", "#800080", "#FF0000", "#008080", "#FFFF00"];
 
 function full_refresh_display () {
 
@@ -11,6 +11,9 @@ function full_refresh_display () {
     function get_color (unit) {
         if (matched_units.length==0) return '#000000';
         if (unit===null) return '#000000';
+        const i = matched_units.indexOf(unit);
+        if (i<0)
+            return '#000000';
         return colors.at(matched_units.indexOf(unit)%colors.length);
     }
     function color (uk_str, mask=null) {
