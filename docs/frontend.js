@@ -158,9 +158,13 @@ function step_csv () {
     [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
     document.getElementById('step_csv').classList.remove('hidden');
 }
-function step_units () {
+function step_units () {    
     [...document.querySelectorAll('.menu')].forEach(e=>e.classList.add('hidden'));
     document.getElementById('step_units').classList.remove('hidden');
+    
+    document.getElementById('display_morphemes').checked = false;
+    document.getElementById('strs').classList.remove('hidden');
+    document.getElementById('matches').classList.add('hidden');
 }
 function step_matching () {
     reset_matching();
