@@ -94,7 +94,7 @@ button:hover {
 }
 
 #container {
-    width:500px;
+    width:600px;
     margin: 20px auto;
     text-align: left;
 }
@@ -106,6 +106,26 @@ button:hover {
 
 #container label{
     line-height: 1.8;
+}
+
+#container button{
+  min-width: 300px;
+}
+
+/* Vertical line in final window */
+
+#manual_matching_container {
+    position: relative;
+}
+
+#manual_matching_container::before {
+    content: "";
+    position: absolute;
+    left: -5em; 
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background-color: #ddd;
 }
 
 #auto_matching_container, #manual_matching_container {
@@ -244,4 +264,19 @@ select:hover{
     background-color: #f3f4f6;
     border-color: #1b1f2326;
     transition-duration: 0.1s;
+}
+
+/* Button group */
+
+.button-group {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+}
+
+.button-group button {
+    display: inline-block !important;
+    margin: 0 !important;
 }

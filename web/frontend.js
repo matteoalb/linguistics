@@ -113,11 +113,13 @@ function full_refresh_display () {
 
         full_refresh_display();
     });
+    /* Not used ? I removed the hidden associated button : <div style="display: inline-flex; gap: 10px; align-items: center;">
     document.getElementById('k_str_remove_majs').addEventListener('click', () => {
         for (const sentence of SENTENCES)
             sentence.k_str = clean_str(sentence.k_str, document.getElementById('chars_delete').value);
         full_refresh_display();
     });
+    */
     document.getElementById('uk_str_remove_majs').addEventListener('click', () => {
         for (const sentence of SENTENCES)
             sentence.uk_str = sentence.uk_str.toLowerCase();
@@ -210,7 +212,7 @@ document.getElementById('matching_step').addEventListener('click', () => {
     for (const match of possible_matches) {
         selector.appendChild(Object.assign(document.createElement('option'), {
             value: JSON.stringify(match),
-            innerHTML: `<b>${match.uk_unit}</b> <-> ${match.unit} (Score: ${match.score})`
+            innerHTML: `<b>${match.uk_unit}</b> <=> ${match.unit} (Score: ${match.score})`
         }));
     }
 })

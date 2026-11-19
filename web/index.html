@@ -9,7 +9,7 @@
 
         <div id="step_csv" class="menu">
             <br>
-            <h1>Étape 1 - Importer/Nettoyer</h1>
+            <h1>Étape 1 - Importer / Nettoyer</h1>
             <button onclick="step_units()">></button>
             
             <br>
@@ -20,14 +20,15 @@
                 <label for="csv_import">Importer un csv :</label>
                 <input name="csv_import" id="csv_import" type="file"/>
                 <br><br>
-                Nettoyer les textes (majuscules, ponctuation, etc)
+                <b>Nettoyer les textes en langue inconnue (majuscules, ponctuation, etc) :</b>
                 <br>
                 <label for="chars_delete">Caractères à retirer :</label>
                 <input type="text" id="chars_delete" type="text" size=20 value=".,;:!?_-[](){}。？" />
                 <br>
-                <button id="uk_str_remove_puncts">Retirer les caractères en langue inconnue</button>
-                <button id="k_str_remove_majs" class="hidden">Retirer les caractères en langue connue</button>
-                <button id="uk_str_remove_majs">Décapitaliser en langue inconnue</button>
+                <div class="button-group">
+                    <button id="uk_str_remove_puncts">Retirer les caractères</button>
+                    <button id="uk_str_remove_majs">Décapitaliser</button>
+                </div>
             </div>
         </div>
         <div id="step_units" class="hidden menu">
