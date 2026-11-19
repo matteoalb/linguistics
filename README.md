@@ -6,7 +6,7 @@ The goal is to develop the prototype of a morpheme detector and a dashboard.
 
 ## Structure
 
-The final product can be found in the *web* folder, with the core of the project in ```web/backend.js```.
+The final product can be found in the *web* folder, with the core of the project in ```docs/backend.js```.
 The equivalent of this file in Python can be found in ```legacy/backend.py```.
 
 The rest of the project is dedicated to UI and data storage.
