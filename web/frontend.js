@@ -128,10 +128,27 @@ function full_refresh_display () {
 
 
     document.getElementById('k_english_str_remove_majs').addEventListener('click', () => {
+        const del_chars = document.getElementById('k_chars_delete').value;
         for (const sentence of SENTENCES)
-            sentence.k_str = clean_str(
-                sentence.k_str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," "),
-                ".,;:!?_-[](){}").toLowerCase();
+            sentence.k_str = clean_str(sentence.k_str, del_chars);
+        full_refresh_display();
+    });
+
+    document.getElementById('k_decapitalize').addEventListener('click', () => {
+        SENTENCES.map(e=> {
+            e.k_str = e.k_str.toLowerCase();
+            return e;
+        });
+        full_refresh_display();
+    })
+
+    document.getElementById('remove_units').addEventListener('click', () => {
+        const removed_unit = document.getElementById('units_delete').value;
+        const replace_unit = document.getElementById('units_replace').value;
+        SENTENCES.map(e=>{
+            if (e.k_units.delete(removed_unit) && replace_unit.length)
+                e.k_units.add(replace_unit);
+        });
         full_refresh_display();
     });
 }

@@ -9,7 +9,7 @@
 
         <div id="step_csv" class="menu">
             <br>
-            <h1>Étape 1 - Importer / Nettoyer</h1>
+            <h1>Étape 1 - Importer / Nettoyer la langue inconnue</h1>
             <button onclick="step_units()">></button>
             
             <br>
@@ -40,7 +40,14 @@
             <br>
             <div id="container">
                 <b>Nettoyer la langue connue :</b>
-                <button id="k_english_str_remove_majs">Retirer les caractères spéciaux en langue connue (ponctuation)</button>
+                <br>
+                <label for="k_chars_delete">Caractères à retirer :</label>
+                <input type="text" name="k_chars_delete" id="k_chars_delete" type="text" size=20 value=".,;:!?_-[](){}#$" />
+                <br>
+                <div class="button-group">
+                    <button id="k_english_str_remove_majs">Retirer les caractères</button>
+                    <button id="k_decapitalize">Décapitaliser</button>
+                </div>
 
                 <br>
                 <label for="units_method"><b>Méthode d'extraction d'unités :</b></label>
@@ -50,6 +57,15 @@
                 </select>
                 <br>
                 <button id="units_extract">Extraire les unités</button>
+                <br>
+                <label for="units_delete">Unité à retirer :</label>
+                <input type="text" id="units_delete" type="text" size=20 value="" />
+                <br>
+                <label for="units_replace">Remplacer par (vide pour supprimer) :</label>
+                <input type="text" id="units_replace" type="text" size=20 value="" />
+                <br>
+                <button id="remove_units">Retirer/remplacer les unités</button>
+                <br>
             </div>
         </div>
         <div id="step_matching" class="hidden menu">
