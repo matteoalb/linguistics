@@ -13,4 +13,4 @@ The rest of the project is dedicated to UI and data storage.
 
 ## User Manual and Application
 
-We wrote a user manual which shows how to use our tool to detect morphemes, it can be found in ```path/to_file.pdf```.
+We wrote a user manual which shows how to use our tool to detect morphemes, it can be found in ```docs/user_manual.pdf```.
